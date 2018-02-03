@@ -1,0 +1,82 @@
+{
+  "receipts": [
+    {
+      "id": 1,
+      "vendor": {
+        "name": "Walmart",
+        "id": 1,
+        "location": {
+          "lat": "40.92",
+          "lng": "10.24"
+        }
+      },
+      "items": [
+        {
+          "id": 12321,
+          "name": "Carrots",
+          "total": 695,
+          "img": "https://www.organicfacts.net/wp-content/uploads/Carrot1.jpg",
+          "quantity": "0.5 kg"
+        },
+        {
+          "id": 183292,
+          "name": "Dempster's Whole Wheat Bread",
+          "total": 152,
+          "img": "https://www.dempsters.ca/sites/default/files/Dempsters-Smooth-Multigrain-3d_RightA.png",
+          "quantity": "1"
+        },
+        {
+          "id": 1232,
+          "name": "Chips",
+          "total": 618,
+          "img": "https://static.meijer.com/Media/000/28400/0002840064549_0_A1C1_2000.png",
+          "quantity": "2"
+        },
+        {
+          "id": 864,
+          "name": "Bananas",
+          "total": 149,
+          "img": "https://img.purch.com/h/1000/aHR0cDovL3d3dy5saXZlc2NpZW5jZS5jb20vaW1hZ2VzL2kvMDAwLzA2NS8xNDkvb3JpZ2luYWwvYmFuYW5hcy5qcGc=",
+          "quantity": "0.2 kg"
+        },
+        {
+          "id": 684390,
+          "name": "Juice",
+          "total": 1520,
+          "quantity": "1L"
+        },
+        {
+          "id": 29430,
+          "name": "Coupon",
+          "total": -100,
+          "quantity": 1
+        }
+      ],
+      "subtotal": 3034,
+      "tax": 394,
+      "total": 3428
+    }, {
+      "id": 2,
+      "vendor": {
+        "name": "Jack Aster's",
+        "id": 2,
+        "location": {
+          "lat": "40.162",
+          "lng": "11.25"
+        }
+      },
+      "items": [
+        {
+          "id": 610982,
+          "name": "Pasta",
+          "total": 4210,
+          "img": "http://www.seriouseats.com/recipes/images/2016/08/20160827-cherry-tomato-pasta-13-1500x1125.jpg"
+        }
+      ],
+      "subtotal": 4210,
+      "tip": 132,
+      "tax": 547,
+      "total": 4889
+    }
+  ]
+}
