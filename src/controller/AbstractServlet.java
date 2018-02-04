@@ -1,6 +1,8 @@
 package controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import db.DatabaseAccessor;
+import db.DatabaseAccessorImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,7 +14,7 @@ import java.io.IOException;
 public abstract class AbstractServlet extends HttpServlet {
 
     final ObjectMapper mapper = new ObjectMapper();
-//    public DatabaseAccessor db = new DatabaseAccessor();
+    public DatabaseAccessor db = new DatabaseAccessorImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

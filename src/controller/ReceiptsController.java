@@ -10,8 +10,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @WebServlet("/receipts")
 public class ReceiptsController extends AbstractServlet{
@@ -20,27 +23,41 @@ public class ReceiptsController extends AbstractServlet{
     @Override
     protected ResponseEntity<?> processGet(HttpServletRequest request, HttpServletResponse response) {
         ResponseEntity<List<Receipt>> rs = new ResponseEntity<>();
-        List<Receipt> list = new ArrayList<>();
+        List<Receipt> list = null;
+        try {
+            list = db.getAllReceipts();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            rs.setError(e.getMessage());
+        }
 
-        list.add(new Receipt(){{
-            setId(1);
-        }});
+        for(Map.Entry<String, String[]> entry: request.getParameterMap().entrySet()) {
+            switch (entry.getKey()) {
+                case "id":
+                    int id = Integer.parseInt(entry.getValue()[0]);
+
+                    list = list.stream().filter((receipt -> receipt.getId()==id)).collect(Collectors.toList());
+                    break;
+            }
+        }
 
         rs.setData(list);
-
         return rs;
     }
 
     @Override
     protected ResponseEntity<?> processPost(HttpServletRequest request, HttpServletResponse response) {
-
+        ResponseEntity<Integer> rs = new ResponseEntity<>();
         try {
             String requestData = requestDataToString(request);
             Receipt receipt = mapper.readValue(requestData, Receipt.class);
-            System.out.println(receipt.getItems().size());
-        } catch (IOException e) {
+            db.insertReceipt(receipt);
+        } catch (Exception e) {
             e.printStackTrace();
+            rs.setError(e.getMessage());
         }
-        return null;
+        return rs;
     }
+
+
 }
