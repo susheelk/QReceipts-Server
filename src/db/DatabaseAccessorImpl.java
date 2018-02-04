@@ -2,6 +2,7 @@ package db;
 
 import com.sun.org.apache.regexp.internal.RE;
 import model.Item;
+import model.Location;
 import model.Receipt;
 import model.Vendor;
 import org.postgresql.jdbc3.Jdbc3PoolingDataSource;
@@ -22,11 +23,13 @@ public class DatabaseAccessorImpl implements DatabaseAccessor {
     }};
 
     public static final String insertReceipt = "INSERT INTO qrreceipts.model.receipts (id, vendor, subtotal, tip, tax, total) VALUES (?, ?, ?, ?, ?, ?)";
-    public static final String insertVendor = "INSERT INTO qrreceipts.model.vendors (id, name, location_lat, location_lng) VALUES (?, ?, ?, ?)";
+    public static final String insertVendor = "INSERT INTO qrreceipts.model.vendors (id, name, location_lat, location_lng, img) VALUES (?, ?, ?, ?, ?)";
     public static final String getReceipts = "SELECT * FROM qrreceipts.model.receipts";
     public static final String getVendorById = "SELECT * FROM qrreceipts.model.vendors WHERE id=?";
     public static final String insertItem= "INSERT INTO qrreceipts.model.items (id, name, total, img, quantity, receipt_id, spec_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static final String getItemByReceipt = "SELECT * FROM qrreceipts.model.items WHERE receipt_id = ?";
+    public static final String bindUserWithReceipt = "UPDATE qrreceipts.model.receipts SET user_id = ? WHERE id = ?";
+
 
 
 
@@ -43,6 +46,8 @@ public class DatabaseAccessorImpl implements DatabaseAccessor {
 
        try (Connection conn = poolService.getConnection();
             PreparedStatement statement = conn.prepareStatement(insertReceipt)) {
+
+            receipt.setId((int)(System.currentTimeMillis()/1000-(10e7)));
             statement.setInt(1, receipt.getId());
             statement.setInt(2, vendor.getId());
             statement.setInt(3, receipt.getSubtotal());
@@ -50,6 +55,7 @@ public class DatabaseAccessorImpl implements DatabaseAccessor {
             statement.setInt(5, receipt.getTax());
             statement.setInt(6, receipt.getTotal());
             statement.execute();
+           conn.close();
         } catch (SQLException e) {
             throw e;
         }
@@ -72,6 +78,7 @@ public class DatabaseAccessorImpl implements DatabaseAccessor {
             statement.setInt(6, receipt.getId());
             statement.setString(7, uniqueId());
             statement.execute();
+            conn.close();
         } catch (SQLException e) {
             throw e;
         }
@@ -93,6 +100,7 @@ public class DatabaseAccessorImpl implements DatabaseAccessor {
                 item.setQuantity(rs.getString("quantity"));
 //                user.setName(rs.getString("name"));
                 list.add(item);
+                connection.close();
             }
         } catch (Exception e) {
             throw e;
@@ -106,9 +114,11 @@ public class DatabaseAccessorImpl implements DatabaseAccessor {
              PreparedStatement statement = conn.prepareStatement(insertVendor)) {
             statement.setInt(1, vendor.getId());
             statement.setString(2, vendor.getName());
-            statement.setInt(3, 5);
-            statement.setInt(4, 5);
+            statement.setString(3, vendor.getLocation().getLat());
+            statement.setString(4, vendor.getLocation().getLng());
+            statement.setString(5, vendor.getImg());
             statement.execute();
+            conn.close();
         } catch (SQLException e) {
             throw e;
         }
@@ -134,7 +144,12 @@ public class DatabaseAccessorImpl implements DatabaseAccessor {
 //                user.setName(rs.getString("name"));
                 receipt.setVendor(getVendorById(rs.getInt("vendor")));
                 receipt.setItems(getItemsByReceipt(receipt));
+                receipt.setUserId(rs.getInt("user_id"));
+                if(receipt.getUserId() == 0){
+                    receipt.setUserId(-1);
+                }
                 list.add(receipt);
+                connection.close();
             }
         } catch (Exception e) {
             throw e;
@@ -154,11 +169,27 @@ public class DatabaseAccessorImpl implements DatabaseAccessor {
                 vendor = new Vendor();
                 vendor.setId(rs.getInt("id"));
                 vendor.setName(rs.getString("name"));
+                vendor.setLocation(new Location(rs.getString("location_lat"), rs.getString("location_lng")));
+                vendor.setImg(rs.getString("img"));
             }
+            connection.close();
         } catch (Exception e) {
             throw e;
         }
         return vendor;
+    }
+
+    @Override
+    public void bindUserWithReceipt(int userId, int receiptId) throws SQLException {
+        try (Connection conn = poolService.getConnection();
+             PreparedStatement statement = conn.prepareStatement(bindUserWithReceipt)) {
+            statement.setInt(1, userId);
+            statement.setInt(2, receiptId);
+            statement.execute();
+            conn.close();
+        } catch (SQLException e) {
+            throw e;
+        }
     }
 
     private String uniqueId(){

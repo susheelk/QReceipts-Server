@@ -9,7 +9,9 @@ import java.util.List;
 public interface DatabaseAccessor {
     public int insertReceipt(Receipt receipt) throws SQLException;
 
-    public List<Receipt> getAllReceipts() throws SQLException;
+    public List<Receipt> getAllRecgiteipts() throws SQLException;
 
     public Vendor getVendorById(int id) throws SQLException;
+
+    public void bindUserWithReceipt(int userId, int receiptId) throws SQLException;
 }

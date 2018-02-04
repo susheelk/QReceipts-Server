@@ -1,6 +1,7 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.istack.internal.Nullable;
 
 import java.util.List;
 
@@ -17,6 +18,19 @@ public class Receipt {
     private int tip;
     private int tax;
     private int total;
+
+    @Nullable
+    private Integer userId;
+
+    @Nullable
+    public int getUserId() {
+        return userId;
+    }
+
+    @Nullable
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
     public int getId() {
         return id;

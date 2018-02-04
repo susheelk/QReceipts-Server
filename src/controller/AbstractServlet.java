@@ -20,14 +20,14 @@ public abstract class AbstractServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         String json = mapper.writeValueAsString(processGet(req, resp));
-        System.out.println("getted");
+        System.out.println("getted from: "+req.getRemoteAddr());
         resp.getWriter().write(json);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
-        System.out.println("posted");
+        System.out.println("posted from: "+req.getRemoteAddr());
         String json = mapper.writeValueAsString(processPost(req, resp));
         resp.getWriter().write(json);
 
